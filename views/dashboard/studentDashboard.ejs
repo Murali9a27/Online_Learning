@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body{
+            background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+        }
+        h1, h2 {
+            color: #343a40;
+        }
+        .card {
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-radius: 15px; /* Rounded corners for cards */
+            border: none; /* No border */
+        }
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Deeper shadow on hover */
+        }
+        .logout-btn {
+            margin-top: 20px;
+            background-color: #dc3545;
+            border: none;
+            border-radius: 25px; /* Rounded logout button */
+        }
+        .logout-btn:hover {
+            background-color: #c82333;
+        }
+        .card-img-top {
+            border-top-left-radius: 15px; /* Rounded top corners */
+            border-top-right-radius: 15px; /* Rounded top corners */
+            height: 200px; /* Fixed height for images */
+            object-fit: cover; /* Cover image without distortion */
+        }
+        .card-title {
+            font-weight: 600; /* Bold title */
+            font-size: 1.25rem; /* Title font size */
+            color: #343a40; /* Title color */
+        }
+        .card-text {
+            color: #6c757d; /* Muted text color */
+            font-size: 0.95rem; /* Slightly smaller font size for description */
+        }
+        .btn-primary {
+            border-radius: 25px; /* Rounded enroll button */
+            font-weight: bold; /* Bold enroll button text */
+        }
+    </style>
+</head>
+<body>
+    
+    <%- include('../partials/header') %>
+    
+    <div class="container mt-4">
+        <h1>Welcome, <%= user.name %>.</h1>
+
+        <% if(enrolledCourses.length === 0){%>
+            
+            <h2 class="mt-4">Get Enrolled to the Courses</h2>
+        <% }else{ %>
+            <h2 class="mt-4" style="color:#6c757d">Your Enrolled Courses</h2>
+        <% } %>
+        <div class="row mb-4">
+            <% enrolledCourses.forEach(course => { %>
+                <div class="col-md-4 mb-3">
+                    <div class="card shadow-sm">
+                        <a href="../lessons/<%= course.id%>">
+                            <img src="/uploads/<%= course.image_url.split('/').pop() %>" class="card-img-top" alt="<%= course.title %>">
+                        </a>
+                        <div class="card-body">
+                            <h5 class="card-title"><%= course.title %></h5>
+                            <p class="card-text" style="height: 20px; overflow: hidden;"><%= course.description %></p>
+                            <p class="card-text"><small class="text-muted">Enrolled on: <%= new Date(course.enrolled_at).toLocaleDateString() %></small></p>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+        <% let enrolled_id = enrolledCourses.map(course=>course.id) %>
+        <h2 class="mt-4" style="color:#6c757d">Latest Courses Available</h2>
+        <div class="row">
+            <% latestCourses.forEach(course => { 
+                if(! enrolled_id.includes(course.id) ){%>
+                <div class="col-md-4 mb-3">
+                    <div class="card shadow-sm">
+                        
+                        <img src="/uploads/<%= course.image_url.split('/').pop() %>" class="card-img-top" alt="<%= course.title %>">
+                        
+                        <div class="card-body">
+                            <h5 class="card-title"><%= course.title %></h5>
+                            <p class="card-text" style="height: 20px; overflow: hidden;"><%= course.description %></p>
+                            <p class="card-text"><small class="text-muted">Uploaded on: <%= new Date(course.created_at).toLocaleDateString() %></small></p>
+                            
+                            
+                                <form action="../courses/enroll/<%= course.id %>" method="POST">
+                                    <button type="submit" class="btn btn-primary w-100">Enroll</button>
+                                </form>
+                            
+                        </div>
+                    </div>
+                </div>
+            <% }}) %>
+        </div>
+
+        <!-- <button onclick="location.href='/logout'" class="btn logout-btn">Logout</button> -->
+    </div>
+
+    
+</body>
+</html>

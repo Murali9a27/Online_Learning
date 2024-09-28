@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Navigation</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .tag {
+            display: inline-block;
+            background-color: #f1f1f1;
+            border-radius: 15px;
+            padding: 5px 10px;
+            margin: 2px;
+        }
+        .tag:hover {
+            background-color: #007bff;
+            color: white;
+        }
+        body{
+            background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+            min-height: 100vh;
+        }
+        h1, h2 {
+            color: #343a40;
+        }
+        .card {
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-radius: 15px; /* Rounded corners for cards */
+            border: none; /* No border */
+        }
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Deeper shadow on hover */
+        }
+        .logout-btn {
+            margin-top: 20px;
+            background-color: #dc3545;
+            border: none;
+            border-radius: 25px; /* Rounded logout button */
+        }
+        .logout-btn:hover {
+            background-color: #c82333;
+        }
+        .card-img-top {
+            border-top-left-radius: 15px; /* Rounded top corners */
+            border-top-right-radius: 15px; /* Rounded top corners */
+            height: 200px; /* Fixed height for images */
+            object-fit: cover; /* Cover image without distortion */
+        }
+        .card-title {
+            font-weight: 600; /* Bold title */
+            font-size: 1.25rem; /* Title font size */
+            color: #343a40; /* Title color */
+        }
+        .card-text {
+            color: #6c757d; /* Muted text color */
+            font-size: 0.95rem; /* Slightly smaller font size for description */
+        }
+        .btn-primary {
+            border-radius: 25px; /* Rounded enroll button */
+            font-weight: bold; /* Bold enroll button text */
+        }
+    </style>
+</head>
+<body>
+    <%- include('./partials/header'); %>
+
+    <div class="container mt-5">
+        <h1>Select Courses by Category and Tags</h1>
+
+        <!-- Category Filter -->
+        <div class="form-group">
+            <label for="categorySelect">Filter by Category</label>
+            <select class="form-control" id="categorySelect">
+                <option value="all">All Categories</option>
+                <option value="Programming">Programming</option>
+                <option value="Design">Design</option>
+                <option value="Data Science">Data Science</option>
+                <option value="Marketing">Marketing</option>
+                <!-- Add more categories here -->
+            </select>
+        </div>
+
+        <!-- Tag Filter -->
+        <div class="form-group">
+            <label for="tagSearch">Search by Tags</label>
+            <input type="text" class="form-control" id="tagSearch" placeholder="Enter tags (e.g. JavaScript, Python)">
+        </div>
+
+        <!-- Courses List -->
+        <div id="coursesContainer" class="row">
+            <% courses.forEach(course => { %>
+                
+                <div class="col-md-4 mb-3 course-card"  data-category="<%= course.category.toLowerCase() %>" data-tags="<%= course.tags.toLowerCase() %>">
+                    <div class="card shadow-sm">
+                        <img src="/uploads/<%= course.image_url.split('/').pop() %>" class="card-img-top" alt="<%= course.title %>">
+                        <div class="card-body">
+                            <h5 class="card-title"><%= course.title %></h5>
+                            <p class="card-text" ><%= course.description.slice(0,40) + "..." %></p>
+                            <p class="card-text"><small class="text-muted">Uploaded on: <%= new Date(course.created_at).toLocaleDateString() %></small></p>
+                            
+                           
+                            <form action="../courses/enroll/<%= course.id %>" method="POST">
+                                <button type="submit" class="btn btn-primary w-100">Enroll</button>
+                            </form>
+                            
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script>
+
+        // Filter courses by category
+
+        $('#categorySelect').on('change', function() {
+            const selectedCategory = this.value.toLowerCase().trim();
+            $('.course-card').each(function() {
+                const courseCategory = $(this).data('category');
+                if (selectedCategory === 'all' || courseCategory === selectedCategory) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+
+        // Filter courses by tags
+        $('#tagSearch').on('input', function() {
+            const searchTag = this.value.toLowerCase().trim();
+            $('.course-card').each(function() {
+                const courseTags = $(this).data('tags');
+                if (courseTags.includes(searchTag)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

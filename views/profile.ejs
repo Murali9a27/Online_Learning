@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= user.name %>'s Profile</title>
+    <link rel="stylesheet" href="/css/styles.css"> <!-- Link your CSS here -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body{
+            background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+        }
+
+        .list-group{
+            background-color: #cecff4;
+            border:2px solid black;
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/header'); %>
+
+    <div class="container mt-5" style="height: 100vh;">
+        <h1 class="mb-4">Welcome, <%= user.name.charAt(0).toUpperCase() + user.name.slice(1) %>.</h1>
+        <hr>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <u><h5 class="card-title">Profile Information</h5></u>
+                        <p><strong>Email:</strong> <%= user.email %></p>
+                        <p><strong>Role:</strong> <%= user.role.charAt(0).toUpperCase() + user.role.slice(1) %></p>
+                        <p><strong>Joined:</strong> <%= new Date(user.created_at).toDateString() %></p>
+                        <!-- <a href="/profile/edit" class="btn btn-primary">Edit Profile</a> -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <% if (role === 'student') { %>
+                    <h2>Your Enrolled Courses</h2>
+                    <% if (courses.length > 0) { %>
+                        <div class="list-group">
+                            <% courses.forEach(course => { %>
+                                <a href="/lessons/<%= course.id %>" class="list-group-item list-group-item-action">
+                                    <h5 class="mb-1"><%= course.title %></h5>
+                                    <p class="mb-1"><%= course.description.slice(0, 100) %>...</p>
+                                </a>
+                            <% }) %>
+                        </div>
+                    <% } else { %>
+                        <p>You have not enrolled in any courses yet.</p>
+                    <% } %>
+                <% } else if (role === 'instructor') { %>
+                    <h2>Your Created Courses</h2>
+                    <% if (courses.length > 0) { %>
+                        <div class="list-group">
+                            <% courses.forEach(course => { %>
+                                <a href="/courses/<%= course.id %>" class="list-group-item list-group-item-action">
+                                    <h5 class="mb-1"><%= course.title %></h5>
+                                    <p class="mb-1"><%= course.description.slice(0, 100) %>...</p>
+                                </a>
+                            <% }) %>
+                        </div>
+                    <% } else { %>
+                        <p>You have not created any courses yet.</p>
+                    <% } %>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

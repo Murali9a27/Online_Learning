@@ -1,0 +1,9 @@
+<h2>My Enrolled Courses</h2>
+<ul>
+    <% courses.forEach(course => { %>
+        <li>
+            <h3><%= course.title %></h3>
+            <a href="/courses/<%= course.id %>">View Course</a>
+        </li>
+    <% }) %>
+</ul>

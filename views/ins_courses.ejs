@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= courses[0].title %> - Course Details</title>
+    <link rel="stylesheet" href="/css/styles.css"> <!-- Link your custom CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+        }
+        
+        .course-header {
+            background-color: #4e73df;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .course-content {
+            padding: 20px;
+        }
+        .course-actions {
+            margin-top: 20px;
+        }
+        .btn-custom {
+            border-radius: 25px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Include Header Partial -->
+    <%- include('./partials/header') %>
+
+    <div class="container mt-5">
+        <% if (courses.length > 0) { %>
+            <div class="container border border-2 rounded">
+                <div class="course-header">
+                    <h1><%= courses[0].title %></h1>
+                    <p><%= courses[0].description %></p>
+                </div>
+                
+                <div class="course-content mt-4">
+                    <h3>Course Category: <%= courses[0].category %></h3>
+                    <p><strong>Tags:</strong> <%= courses[0].tags %></p>
+
+                    <div class="course-actions">
+                        <a href="/courses/edit/<%= courses[0].id %>" class="btn btn-primary btn-custom">Edit Course</a>
+                        <a href="/courses/delete/<%= courses[0].id %>" class="btn btn-danger btn-custom">Delete Course</a>
+                        <a href="/lessons/<%= courses[0].id %>/add-lesson" class="btn btn-success btn-custom">Add Lesson</a>
+                    </div>
+                </div>
+            </div>
+        <% } else { %>
+            <div class="alert alert-warning">
+                No course found with the given ID.
+            </div>
+        <% } %>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
