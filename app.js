@@ -11,8 +11,9 @@ const app = express();
 
 // Middleware
 app.use(express.urlencoded({ extended: false }));
-app.use('/uploads', express.static('public/uploads'));
 app.use(express.static('public'));
+app.use('/uploads', express.static('public/uploads'));
+
 
 app.set('view engine', 'ejs');
 
