@@ -67,30 +67,36 @@
     <%- include('./partials/header'); %>
 
     <div class="container mt-5">
-        <h1>Select Courses by Category and Tags</h1>
+        <h1>Explore Courses</h1>
+        <hr>
 
         <!-- Category Filter -->
-        <div class="form-group">
-            <label for="categorySelect">Filter by Category</label>
-            <select class="form-control" id="categorySelect">
-                <option value="all">All Categories</option>
-                <option value="Programming">Programming</option>
-                <option value="Design">Design</option>
-                <option value="Data Science">Data Science</option>
-                <option value="Marketing">Marketing</option>
-                <!-- Add more categories here -->
-            </select>
-        </div>
+        <div class="container row border border-2 border-dark mb-4">
+            <div class="form-group col-md-6">
+                <label for="categorySelect"><u>Filter by Category</u></label>
+                <select class="form-control border rounded-pill" style="background: transparent;" id="categorySelect">
+                    <option value="all">All Categories</option>
+                    <option value="Programming">Programming</option>
+                    <option value="Design">Design</option>
+                    <option value="Data Science">Data Science</option>
+                    <option value="Marketing">Marketing</option>
+                    <!-- Add more categories here -->
+                </select>
+            </div>
 
-        <!-- Tag Filter -->
-        <div class="form-group">
-            <label for="tagSearch">Search by Tags</label>
-            <input type="text" class="form-control" id="tagSearch" placeholder="Enter tags (e.g. JavaScript, Python)">
+            <!-- Tag Filter -->
+            <div class="form-group col-md-6">
+                <label for="tagSearch"><u>Search by Tags</u></label>
+                <input type="text" class="form-control border rounded-pill" style="background: transparent;" id="tagSearch" placeholder="Enter tags (e.g. JavaScript, Python)">
+            </div>
         </div>
+        
 
         <!-- Courses List -->
+        <% let enrolled_id = enrolledCourses.map(course=>course.id) %>
         <div id="coursesContainer" class="row">
-            <% courses.forEach(course => { %>
+            <% courses.forEach(course => {
+                if(! enrolled_id.includes(course.id) ){%> %>
                 
                 <div class="col-md-4 mb-3 course-card"  data-category="<%= course.category.toLowerCase() %>" data-tags="<%= course.tags.toLowerCase() %>">
                     <div class="card shadow-sm">
@@ -108,7 +114,7 @@
                         </div>
                     </div>
                 </div>
-            <% }) %>
+            <% }}) %>
         </div>
     </div>
 

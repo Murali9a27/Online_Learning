@@ -25,8 +25,16 @@
 </head>
 <body>
     <div class="container mt-5">
-        <h1>Lessons for Course <%= courseId %></h1>
-
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            
+            <h1>Lessons for Course <%= courseId %></h1>
+            <% if (user.role==='instructor') {%>
+            <a href="/lessons/<%= courseId %>/add-lesson" class="btn btn-success float-right">Add Lesson</a>
+            <% } %>
+        </div>
+        <hr>
+        
+        
         <% if (lessons.length > 0) { %>
             <div class="row">
                 <% lessons.forEach(lesson => { %>
@@ -37,7 +45,7 @@
                                 <p class="card-text">
                                     <div class="media-container">
                                         <% if (lesson.file_type === 'video') { %>
-                                            <video controls width="100%" height="400px">
+                                            <video controls id="lessonVideo-<%= lesson.id %>">
                                                 <source src="/uploads/<%= lesson.file_url.split('/').pop() %>" type="video/mp4">
                                                 Your browser does not support the video tag.
                                             </video>
@@ -47,10 +55,25 @@
                                             </a>
                                         <% } %>
                                     </div>
-                                    
                                 </p>
+                                <% if (user.role==="student") { %>
+                                <% if (completedLessonIds.includes(lesson.id)) { %>
+                                    <!-- If lesson is completed, show a tick mark -->
+                                     
+                                    <button class="btn btn-success mt-3" disabled>
+                                        <span>&#10003; Completed</span>
+                                    </button>
+                                    
+                                <% } else { %>
+                                    <!-- If not completed, show "Mark as Complete" button -->
+                                    <form id="completeForm" action="/courses/<%= courseId %>/lesson/<%= lesson.id %>/complete" method="POST">
+                                        <button type="submit" class="btn btn-success mt-3" id="completeBtn-<%= lesson.id %>" disabled>Mark as Complete</button>
+                                    </form>
+                                <% } %>
+                                <% } %>
                             </div>
                         </div>
+                        
                     </div>
                 <% }) %>
             </div>
@@ -58,6 +81,34 @@
             <p>No lessons available for this course.</p>
         <% } %>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Iterate over each lesson
+            <% lessons.forEach(lesson => { %>
+                // Get the elements by lesson ID
+                var video<%= lesson.id %> = document.getElementById('lessonVideo-<%= lesson.id %>');
+                var completeBtn<%= lesson.id %> = document.getElementById('completeBtn-<%= lesson.id %>');
+
+                // Video completion logic
+                if (video<%= lesson.id %>) {
+                    video<%= lesson.id %>.addEventListener('ended', function() {
+                        // Enable the Mark as Complete button when the video finishes
+                        completeBtn<%= lesson.id %>.disabled = false;
+                    });
+                }
+
+                // PDF scroll detection logic (not working for external links)
+                var pdfLink<%= lesson.id %> = document.querySelector(`a[href="/uploads/<%= lesson.file_url.split('/').pop() %>"]`);
+                if (pdfLink<%= lesson.id %>) {
+                    pdfLink<%= lesson.id %>.addEventListener('click', function() {
+                        // Simulate marking as complete when the PDF is clicked (PDF viewing can be hard to track externally)
+                        completeBtn<%= lesson.id %>.disabled = false;
+                    });
+                }
+            <% }) %>
+        });
+    </script>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>

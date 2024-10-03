@@ -163,11 +163,117 @@ router.post('/login', (req, res, next) => {
 });
 
 
+// Google Login Route
+router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'],prompt: 'select_account' }));
+
+// Google Callback Route
+router.get('/auth/google/callback', 
+    passport.authenticate('google', {
+        failureRedirect: '/auth/google/failure'
+    }), 
+    (req, res) => {
+        
+        // Store Google profile in session after successful authentication
+        req.session.googleProfile = req.user;
+        const user = req.user;
+        console.log(user.role)
+        if(!user.role){
+            return res.redirect('/choose-role');
+        }
+        else if (user.role === 'instructor') {
+                return res.redirect('/dashboard/instructor');
+            }
+        else {
+                return res.redirect('/dashboard/student');
+            }
+        
+          // Redirect to role selection page
+    }
+);
+
+// Facebook Login Route
+router.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email'], prompt: 'select_account' }));
+  
+router.get('/auth/facebook/callback',
+    passport.authenticate('facebook', { failureRedirect: '/login' }),
+    function(req, res) {
+      // Successful authentication, redirect home.
+    //   res.redirect('/');
+      req.session.facebookProfile = req.user;
+        const user = req.user;
+        console.log(user.role)
+        if(!user.role){
+            return res.redirect('/choose-role');
+        }
+        else if (user.role === 'instructor') {
+                return res.redirect('/dashboard/instructor');
+            }
+        else {
+                return res.redirect('/dashboard/student');
+            }
+    });
+
+// // Facebook Login ends
+
+// Role Selection Page
+router.get('/choose-role', (req, res) => {
+    if (!req.session.googleProfile) {
+        return res.redirect('/auth/google');  // Redirect if no Google profile is found in session
+    }
+    
+    res.render('chooseRole', { googleProfile: req.session.googleProfile });
+});
+
+// Route To Handle Role Selection
+router.post('/choose-role', (req, res) => {
+    const { role } = req.body;
+    const googleProfile = req.session.googleProfile;
+
+    if (!googleProfile) {
+        return res.redirect('/auth/google');  // Redirect if session has expired
+    }
+    
+
+    // Save the user with the selected role
+    db.query(
+        'UPDATE users SET role = ? WHERE email = ?', 
+        [role, googleProfile.email], 
+        (err) => {
+            if (err) {
+                console.error(err);
+                req.flash('error_msg', 'An error occurred while updating your details.');
+                return res.redirect('/choose-role');
+            }
+            console.log(googleProfile.email)
+            req.flash('success_msg', 'Your role has been updated.');
+            db.query('SELECT * FROM users WHERE email =?',[googleProfile.email],(err, user)=>{
+                if(!user[0].role){
+                    return res.redirect('/choose-role');
+                }
+                else if (user[0].role === 'instructor') {
+                        return res.redirect('/dashboard/instructor');
+                    }
+                else {
+                        return res.redirect('/dashboard/student');
+                    }
+            });
+            
+        }
+    );
+
+    
+
+});
+
+
+
+// route to logout
 router.get('/logout', (req, res) => {
     req.logout((err) => {
         if (err) {
             return next(err);
         }
+        
         req.flash('success_msg', 'You are logged out');
         res.redirect('/login');
     });

@@ -3,7 +3,7 @@ const express = require('express');
 const session = require('express-session');
 const flash = require('connect-flash');
 const passport = require('./config/passport');
-// const db = require('./config/db');
+const db = require('./config/db');
 const authRoutes = require('./routes/auth');
 
 
@@ -13,6 +13,7 @@ const app = express();
 app.use(express.urlencoded({ extended: false }));
 app.use('/uploads', express.static('public/uploads'));
 app.use(express.static('public'));
+
 app.set('view engine', 'ejs');
 
 
@@ -39,6 +40,9 @@ app.use('/', authRoutes);
 app.use('/courses', require('./routes/course'));
 app.use('/lessons', require('./routes/lesson'));
 app.use('/profile', require('./routes/profile'))
+
+
+
 
 // Start the server
 const PORT = process.env.PORT || 3000;

@@ -10,47 +10,53 @@
         body{
             background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
         }
+        .box1 {
+            box-shadow: rgba(29, 29, 29, 0.39) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+            padding: 5%;
+        }
     </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h2 class="text-center">Edit Course</h2>
+    <div class="container my-3 d-flex justify-content-center align-items-center">
+        <div class="box1" style="width: 60%;">
+            <h2 class="text-center">Edit Course</h2>
+      
+            <!-- Edit Course Form -->
+            <form action="/courses/edit/<%= course.id %>" method="POST">
+                <div class="mb-3">
+                    <label for="title" class="form-label">Course Title</label>
+                    <input type="text" class="form-control" id="title" name="title" value="<%= course.title %>" required>
+                </div>
 
+                <div class="mb-3">
+                    <label for="description" class="form-label">Course Description</label>
+                    <textarea class="form-control" id="description" name="description" rows="4" required><%= course.description %></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="category" class="form-label">Category</label>
+                    <select class="form-select" name="category" id="category" required>
+                        <option selected disabled>Select a category</option>
+                        <option value="Programming">Programming</option>
+                        <option value="Data Science">Data Science</option>
+                        <option value="Design">Design</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="tags" class="form-label">Tags (comma-separated)</label>
+                    <input type="text" class="form-control" id="tags" name="tags" value="<%= course.tags %>">
+                </div>
+
+                <!-- Add more fields as necessary -->
+
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a href="/courses" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
         
-        <!-- Edit Course Form -->
-        <form action="/courses/edit/<%= course.id %>" method="POST">
-            <div class="mb-3">
-                <label for="title" class="form-label">Course Title</label>
-                <input type="text" class="form-control" id="title" name="title" value="<%= course.title %>" required>
-            </div>
-
-            <div class="mb-3">
-                <label for="description" class="form-label">Course Description</label>
-                <textarea class="form-control" id="description" name="description" rows="4" required><%= course.description %></textarea>
-            </div>
-
-            <div class="mb-3">
-                <label for="category" class="form-label">Category</label>
-                <select class="form-select" name="category" id="category" required>
-                    <option selected disabled>Select a category</option>
-                    <option value="Programming">Programming</option>
-                    <option value="Data Science">Data Science</option>
-                    <option value="Design">Design</option>
-                    <option value="Marketing">Marketing</option>
-                    <option value="Other">Other</option>
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label for="tags" class="form-label">Tags (comma-separated)</label>
-                <input type="text" class="form-control" id="tags" name="tags" value="<%= course.tags %>">
-            </div>
-
-            <!-- Add more fields as necessary -->
-
-            <button type="submit" class="btn btn-primary">Save Changes</button>
-            <a href="/courses" class="btn btn-secondary">Cancel</a>
-        </form>
     </div>
 
     <!-- Bootstrap JS -->

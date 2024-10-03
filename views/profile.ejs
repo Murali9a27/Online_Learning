@@ -15,6 +15,12 @@
             background-color: #cecff4;
             border:2px solid black;
         }
+        h1 {
+            font-family: 'Verdana', sans-serif;
+        }
+        p {
+            font-family: 'Times New Roman', serif;
+        }
     </style>
 </head>
 <body>
@@ -38,7 +44,7 @@
 
             <div class="col-md-8">
                 <% if (role === 'student') { %>
-                    <h2>Your Enrolled Courses</h2>
+                    <h2>My Learning</h2>
                     <% if (courses.length > 0) { %>
                         <div class="list-group">
                             <% courses.forEach(course => { %>

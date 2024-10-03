@@ -7,10 +7,52 @@ const { ensureAuthenticated, ensureInstructor, ensureStudent } = require('../con
 
 
 // List all courses
+// router.get('/', ensureStudent, (req, res) => {
+//     db.query('SELECT * FROM courses', (err, courses) => {
+//         if (err) throw err;
+//         res.render('courses', { courses, user: req.user });
+//     });
+// });
 router.get('/', ensureStudent, (req, res) => {
-    db.query('SELECT * FROM courses', (err, courses) => {
-        if (err) throw err;
-        res.render('courses', { courses, user: req.user });
+    const enrolledCoursesQuery = `
+        SELECT c.id, c.title, c.description, c.image_url, ec.enrolled_at
+        FROM enrollments ec
+        JOIN courses c ON ec.course_id = c.id
+        WHERE ec.user_id = ?
+    `;
+    
+    
+    // New query to get the latest courses
+    
+    const CoursesQuery = `
+        SELECT * FROM courses
+    `;
+
+   
+    db.query(enrolledCoursesQuery, [req.user.id], (err, enrolledCourses) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Server Error');
+        }
+
+        db.query(CoursesQuery, (err, courses) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send('Server Error');
+            }
+            
+            
+              
+            // Pass user object along with courses data
+            res.render('courses', { 
+                user: req.user, 
+                enrolledCourses, 
+                courses,
+                    
+                
+            });
+            
+        });
     });
 });
 
@@ -176,6 +218,30 @@ router.post('/enroll/:courseId', (req, res) => {
             req.flash('success_msg', 'You have successfully enrolled in the course.');
             res.redirect('/dashboard/student'); // Redirect to the student dashboard
         });
+    });
+});
+
+
+router.post('/:course_id/lesson/:lesson_id/complete', ensureAuthenticated, (req, res) => {
+    const userId = req.user.id;  // Get the authenticated user's ID
+    const lessonId = req.params.lesson_id;  // Get the lesson ID from the route parameters
+    const courseId = req.params.course_id;  // Get the course ID (for redirection)
+
+    // Insert or update the progress for this lesson and user
+    const query = `
+        INSERT INTO progress (user_id, lesson_id, completed, completed_at)
+        VALUES (?, ?, true, NOW())
+        ON DUPLICATE KEY UPDATE completed = true, completed_at = NOW()
+    `;
+
+    db.query(query, [userId, lessonId], (err, result) => {
+        if (err) {
+            console.error('Error updating progress:', err);
+            return res.status(500).send('Internal server error');
+        }
+
+        // Redirect back to the lesson or course page
+        res.redirect(`/lessons/${courseId}`);
     });
 });
 

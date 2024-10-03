@@ -12,6 +12,12 @@
         h1, h2 {
             color: #343a40;
         }
+        h1 {
+            font-family: 'Verdana', sans-serif;
+        }
+        p {
+            font-family: 'Times New Roman', serif;
+        }
         .card {
             transition: transform 0.2s, box-shadow 0.2s;
             border-radius: 15px; /* Rounded corners for cards */
@@ -55,15 +61,18 @@
     
     <%- include('../partials/header') %>
     
-    <div class="container mt-4">
-        <h1>Welcome, <%= user.name %>.</h1>
+    <div class="container mt-4 ">
+        <h1>Welcome, <%= user.name.split(" ")[0] %></h1>
+        <hr>
 
         <% if(enrolledCourses.length === 0){%>
             
-            <h2 class="mt-4">Get Enrolled to the Courses</h2>
+            <h2 class="mt-4">You haven't enrolled to any courses get enrolled.</h2>
         <% }else{ %>
-            <h2 class="mt-4" style="color:#6c757d">Your Enrolled Courses</h2>
+            
+            <h2 class="mt-4" style="color:#6c757d">My Learning</h2>
         <% } %>
+        
         <div class="row mb-4">
             <% enrolledCourses.forEach(course => { %>
                 <div class="col-md-4 mb-3">
@@ -80,8 +89,10 @@
                 </div>
             <% }) %>
         </div>
+        <hr>
         <% let enrolled_id = enrolledCourses.map(course=>course.id) %>
-        <h2 class="mt-4" style="color:#6c757d">Latest Courses Available</h2>
+
+        <h2 class="mt-4" style="color:#6c757d"> Courses Available</h2>
         <div class="row">
             <% latestCourses.forEach(course => { 
                 if(! enrolled_id.includes(course.id) ){%>
@@ -105,9 +116,12 @@
                 </div>
             <% }}) %>
         </div>
+        
 
-        <!-- <button onclick="location.href='/logout'" class="btn logout-btn">Logout</button> -->
+        
     </div>
+    <%- include('../partials/footer'); %>
+
 
     
 </body>

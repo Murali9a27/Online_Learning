@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Instructor Dashboard</title>
-    <link rel="stylesheet" href="/css/styles.css"> <!-- Include your CSS file -->
+    <link rel="stylesheet" href="/styles.css"> <!-- Include your CSS file -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body{
@@ -12,6 +12,12 @@
         }
         h1, h2 {
             color: #343a40; /* Dark color for headings */
+        }
+        h1 {
+            font-family: 'Verdana', sans-serif;
+        }
+        p {
+            font-family: 'Times New Roman', serif;
         }
         .card {
             transition: transform 0.3s, box-shadow 0.3s; /* Smooth transitions */
@@ -31,9 +37,7 @@
         .btn-success {
             border-radius: 25px; /* Rounded edges for buttons */
         }
-        .btn-primary {
-            border-radius: 25px; /* Rounded edges for buttons */
-        }
+        
         .mb-4 {
             margin-bottom: 20px; /* Consistent spacing */
         }
@@ -66,7 +70,9 @@
         <hr>
 
         <div class="d-flex justify-content-between align-items-center mb-4">
+            <% if(instructorCourses){ %>
             <h2>Your Courses</h2>
+            <%}%>
             <a href="/courses/add" class="btn btn-success float-right">Add New Course</a>
         </div>
 
@@ -81,23 +87,27 @@
                             <h5 class="card-title"><%= course.title %></h5>
                             <p class="card-text"><%= course.description.slice(0,35) + "..." %></p>
                             <p class="card-text"><small class="text-muted">Enrolled Students: <%= course.student_count %></small></p>
-                            <a href="/courses/edit/<%= course.id %>" class="btn btn-primary">Edit</a>
-                            <a href="/courses/delete/<%= course.id %>" class="btn btn-primary">Delete</a>
-                            <a href="/lessons/<%= course.id %>/add-lesson" class="btn btn-primary">Add lessons</a>
+                            <div class="row">
+                                <a href="/courses/edit/<%= course.id %>" class="btn btn-primary col-md-5 mx-2 mr-4">Edit</a>
+                                <a href="/courses/delete/<%= course.id %>" class="btn btn-danger col-md-5 mx-2">Delete</a>    
+                            </div>
+                            
                         </div>
                     </div>
                 </div>
             <% }) %>
         </div>
     </div>
+    <%- include('../partials/footer'); %>
+    
     <script>
-        // Hide flash message after 2 seconds (2000ms)
+        
         setTimeout(function() {
             var flashMessage = document.getElementById('flash-message');
             if (flashMessage) {
                 flashMessage.style.display = 'none';
             }
-        }, 8000);  // 2000ms = 2 seconds
+        }, 8000);  
     </script>
 
 

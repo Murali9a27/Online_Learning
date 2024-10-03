@@ -41,8 +41,8 @@ const upload = multer({
 
 
 router.get('/:courseId', (req, res) => {
-    const courseId = req.params.courseId;
 
+    const courseId = req.params.courseId;
     // Query the database to get all lessons related to the given courseId
     db.query('SELECT * FROM lessons WHERE course_id = ?', [courseId], (err, results) => {
         if (err) {
@@ -50,8 +50,23 @@ router.get('/:courseId', (req, res) => {
             return res.status(500).send('Server Error');
         }
 
+        // After getting lessons, query the progress table to get the completed lessons for this course and user
+        db.query('SELECT lesson_id, completed_at FROM progress WHERE user_id = ?', [req.user.id], (err, progressResults) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send('Server Error');
+            }
+            
+
+            // Extract lesson IDs that are completed
+            const completedLessonIds = progressResults.map(row => row.lesson_id);
+            
+            // Pass both lessons and completed lessons to the view
+           
+            res.render('course_lessons', { lessons: results, courseId, completedLessonIds, progressResults, user: req.user });
+        });
         // If lessons are found, pass them to the view
-        res.render('course_lessons', { lessons: results, courseId });
+        // res.render('course_lessons', { lessons: results, courseId });
     });
 });
 
@@ -76,6 +91,7 @@ router.post('/:courseId/add-lesson', upload.single('file'), (req, res) => {
         res.redirect('/dashboard/instructor'); // Redirect back to course page
     });
 });
+
 
 
 module.exports = router;
